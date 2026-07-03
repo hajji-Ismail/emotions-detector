@@ -84,7 +84,7 @@ def get_callbacks():
     )
     
     model_checkpoint = ModelCheckpoint(
-        filepath='./results/modelfinal_emotion_model.keras',
+        filepath='./results/model/final_emotion_model.keras',
         monitor='val_accuracy',
         save_best_only=True,
         verbose=1

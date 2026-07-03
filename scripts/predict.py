@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 # 1. Load the saved .keras model
-model = tf.keras.models.load_model('./results/modelfinal_emotion_model.keras')
+model = tf.keras.models.load_model('./results/model/final_emotion_model.keras')
 df = pd.read_csv("./data/test_with_emotions.csv")
 pixels_list = df['pixels'].apply(lambda x: np.fromstring(x, sep=' ')).values
     
