@@ -119,22 +119,53 @@ def plot_and_save_learning_curves(history, filename='./results/model/learning_cu
     print(f"Learning curves successfully saved as {filename}.")
 
 def main():
+    os.makedirs("./results/model", exist_ok=True)
+
+    print("Loading dataset...")
     df = pd.read_csv("./data/train.csv")
-    print(df.head(1))
-    x,y = Extrat_X_Y(df)
-    model = build_cnn_model()
-    EPOCHS = 100
-    BATCH_SIZE = 64
-    callbacks_list = get_callbacks()
-    print("Starting training routine...")
-    history = model.fit(
-        x, y,
-        epochs=EPOCHS,
-        batch_size=BATCH_SIZE,
-        callbacks=callbacks_list
+
+    X, y = Extrat_X_Y(df)
+
+    from sklearn.model_selection import train_test_split
+
+    X_train, X_val, y_train, y_val = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42,
+        stratify=y
     )
+
+    print("Training samples:", len(X_train))
+    print("Validation samples:", len(X_val))
+
+    model = build_cnn_model()
+
+    callbacks = get_callbacks()
+
+    print("Starting training...")
+
+    history = model.fit(
+        X_train,
+        y_train,
+        validation_data=(X_val, y_val),
+        epochs=100,
+        batch_size=64,
+        callbacks=callbacks,
+        shuffle=True
+    )
+
+    print("\nSaving final model...")
+    model.save("./results/model/final_emotion_model.keras")
+
+    print("Saving architecture...")
+
+    with open("./results/model/final_emotion_model_arch.txt", "w") as f:
+        model.summary(print_fn=lambda x: f.write(x + "\n"))
+
     plot_and_save_learning_curves(history)
 
+    print("\nTraining completed successfully.")
     
 
 

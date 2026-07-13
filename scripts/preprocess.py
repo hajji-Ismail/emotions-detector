@@ -5,7 +5,7 @@ import os
 
 # --- PATH CONFIGURATION ---
 # Define the target output directory
-output_dir = os.path.join("results", "preprocessing_test")
+output_dir = os.path.join("./results", "preprocessing_test")
 
 # Create the directory structure dynamically if it doesn't exist yet
 os.makedirs(output_dir, exist_ok=True)
