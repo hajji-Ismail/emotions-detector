@@ -6,6 +6,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
+from sklearn.model_selection import train_test_split
 
 # Environment setup & compatibility fixes
 
@@ -126,7 +127,6 @@ def main():
 
     X, y = Extrat_X_Y(df)
 
-    from sklearn.model_selection import train_test_split
 
     X_train, X_val, y_train, y_val = train_test_split(
         X,
