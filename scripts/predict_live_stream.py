@@ -19,48 +19,41 @@ def predict_from_images():
     
     model = load_model(MODEL_PATH)
     
-    # 2. Gather and sort all image files matching your pattern (image0.png, image1.png...)
     if not os.path.exists(IMAGE_DIR):
         print(f"Error: Target image directory {IMAGE_DIR} does not exist.")
         sys.exit()
 
-    # Find files that start with 'image' and end with '.png'
+    
     image_files = [f for f in os.listdir(IMAGE_DIR) if f.startswith('image') and f.endswith('.png')]
     
-    # Sort them numerically based on the number in the filename so they process in order
+  
     image_files.sort(key=lambda x: int(''.join(filter(str.isdigit, x))))
 
     if not image_files:
         print("No images found to process.")
         return
 
-    # 3. Process each image sequentially
     for filename in image_files:
         image_path = os.path.join(IMAGE_DIR, filename)
         
         print("Preprocessing ...")
         
-        # Load image
         img = cv2.imread(image_path)
         if img is None:
             continue
             
-        # Transform: Grayscale -> Resize -> Reshape to (-1, 48, 48, 1) -> Normalize
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         resized_img = cv2.resize(gray_img, (48, 48))
         x = resized_img.reshape(-1, 48, 48, 1) / 255.0
         
-        # Predict
         preds = model.predict(x, verbose=0)
         class_idx = np.argmax(preds, axis=1)[0]
         confidence = preds[0][class_idx] * 100
         emotion = EMOTION_LABELS[class_idx]
         
-        # Print matching your requested format
         timestamp = time.strftime("%H:%M:%S")
         print(f"{timestamp}s : {emotion} , {int(confidence)}%\n")
         
-        # Small delay just to mimic a readable stream in the console
         time.sleep(0.2)
 
 

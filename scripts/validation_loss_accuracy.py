@@ -13,14 +13,8 @@ TEST_PATH = "data/test_with_emotions.csv"
 IMG_SIZE = 48
 NUM_CLASSES = 7
 
-# -----------------------------
-# Load model
-# -----------------------------
 model = load_model(MODEL_PATH)
 
-# -----------------------------
-# Load test dataset
-# -----------------------------
 df = pd.read_csv(TEST_PATH)
 
 pixels_list = df['pixels'].apply(lambda x: np.fromstring(x, sep=' ')).values
@@ -30,9 +24,6 @@ X = X / 255.0
 
 y = df["emotion"]
 
-# -----------------------------
-# Evaluate
-# -----------------------------
 loss, accuracy = model.evaluate(X, y, verbose=1)
 
 print(f"\nValidation Loss: {loss:.4f}")

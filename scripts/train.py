@@ -73,7 +73,7 @@ def build_cnn_model():
 
 def get_callbacks():
     """Configures and returns TensorBoard, Early Stopping, and Model Checkpointing callbacks."""
-    log_dir = os.path.join("logs", "fit", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    log_dir = os.path.join("results/model/logs", "fit", datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
     
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     

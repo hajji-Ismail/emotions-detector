@@ -1,0 +1,11 @@
+tensorflow
+tensorboard
+numpy
+pandas
+matplotlib
+scikit-learn
+opencv-python
+pillow
+h5py
+protobuf
+requests

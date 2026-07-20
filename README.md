@@ -128,9 +128,10 @@ TensorBoard logs are written under `logs/fit/<timestamp>/`. Early stopping resto
 The checked-in `requirement.txt` is a Conda explicit package export. Create the environment from it if it matches your platform, then install the Python libraries used by the scripts:
 
 ```bash
-conda create --name emotions --file requirement.txt
+conda create --name emotions 
 conda activate emotions
-python -m pip install tensorflow pandas numpy matplotlib scikit-learn opencv-python
+pip install -r requirements.txt
+
 ```
 
 On machines without Conda, create a virtual environment and install the same Python libraries:
