@@ -20,6 +20,7 @@ def predict() :
     cam = cv2.VideoCapture(0, cv2.CAP_V4L2)
 
     cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+    print(cam.isOpened())
     if not cam.isOpened():
 
         video_preprocessing()

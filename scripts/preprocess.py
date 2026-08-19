@@ -11,8 +11,6 @@ os.makedirs(output_dir, exist_ok=True)
 fallback_video_path = os.path.join(output_dir, "input_video.mp4")
 
 def predict_from_images():
-    
-
     if not os.path.exists(IMAGE_DIR):
         print(f"Error: Target image directory {IMAGE_DIR} does not exist.")
         sys.exit()
@@ -34,16 +32,37 @@ def predict_from_images():
             continue
 
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        resized_img = cv2.resize(gray_img, (48, 48))
+        
+        # Detect faces in the grayscale image
+        faces = face_cascade.detectMultiScale(
+            gray_img, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+        )
 
+        # Skip frame if no face is detected
+        if len(faces) == 0:
+            continue
+
+        # Get the largest face
+        x_box, y_box, w_box, h_box = max(faces, key=lambda b: b[2] * b[3])
+    
+        # Crop face from the original image (img, not frame)
+        face_crop = img[y_box : y_box + h_box, x_box : x_box + w_box]
+        if face_crop.size == 0:
+            continue
+
+        # Convert face crop to 48x48 grayscale
+        gray_crop = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
+        resized_img = cv2.resize(gray_crop, (48, 48))
+        
+        # Shape: (48, 48, 1)
         x_single = np.expand_dims(resized_img, axis=-1).astype(np.float32) / 255.0
         x_list.append(x_single)
 
     if not x_list:
         return np.empty((0, 48, 48, 1), dtype=np.float32)
 
+    # Returns array of shape (N, 48, 48, 1)
     return np.array(x_list, dtype=np.float32)
-
 def video_preprocessing():
     if not os.path.exists(fallback_video_path):
         print(f"Error: Fallback video path '{fallback_video_path}' does not exist.")
@@ -106,7 +125,6 @@ face_cascade = cv2.CascadeClassifier(
 def get_frame_x(cam):
     ret, frame = cam.read()
     if not ret or frame is None:
-        print("h")
         return None
 
     cv2.imshow("Camera Stream", frame)
