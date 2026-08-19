@@ -2,6 +2,7 @@ import os
 import sys
 import cv2
 import numpy as np 
+
 MODEL_PATH = './results/model/final_emotion_model.keras'
 IMAGE_DIR = './results/preprocessing_test'
 output_dir = os.path.join("./results", "preprocessing_test")
@@ -95,21 +96,45 @@ def video_preprocessing():
     cv2.destroyAllWindows()
     print(f"Finished! Total snapshots saved to {output_dir}: {snapshot_count}")
 
-def get_frame_x(cam):
 
+
+face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+)
+
+
+def get_frame_x(cam):
     ret, frame = cam.read()
+    if not ret or frame is None:
+        print("h")
+        return None
+
     cv2.imshow("Camera Stream", frame)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         print("\nStream stopped by user.")
         return None
-        
-    if not ret or frame is None:
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(
+        gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30)
+    )
+
+    if len(faces) == 0:
+
         return None
 
-    # Preprocessing pipeline
-    gray_img = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    resized_img = cv2.resize(gray_img, (48, 48))
+    # Get the largest face in the frame
+    x_box, y_box, w_box, h_box = max(faces, key=lambda b: b[2] * b[3])
     
-    # Prepares shape for Keras: (1, 48, 48, 1)
+    face_crop = frame[y_box : y_box + h_box, x_box : x_box + w_box]
+    if face_crop.size == 0:
+
+        return None
+
+    cv2.rectangle(frame, (x_box, y_box), (x_box + w_box, y_box + h_box), (0, 255, 0), 2)
+
+    gray_img = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
+    resized_img = cv2.resize(gray_img, (48, 48))
     x = np.expand_dims(resized_img, axis=(0, -1)).astype(np.float32) / 255.0
+
     return x
