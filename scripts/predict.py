@@ -20,3 +20,4 @@ y_pred = np.argmax(predictions, axis=1)
 accuracy = np.mean(y_true == y_pred) * 100
 
 print(f"Accuracy on test set: {accuracy:.0f}%")
+

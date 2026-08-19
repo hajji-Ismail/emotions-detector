@@ -130,7 +130,8 @@ The checked-in `requirement.txt` is a Conda explicit package export. Create the 
 ```bash
 conda create --name emotions 
 conda activate emotions
-pip install -r requirements.txt
+
+
 
 ```
 
